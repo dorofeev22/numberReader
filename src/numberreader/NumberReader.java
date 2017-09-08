@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Приложение сортирующее числа из файла
@@ -20,10 +23,13 @@ public class NumberReader {
         String sortOrder = args[1];
         // валидируем введенные параметры
         StringBuilder errors = new StringBuilder();
+        Integer numbersCount = 0;
         if (numberCountInput == null || numberCountInput.isEmpty()) {
             errors.append("Не указано количество выводимых чисел.\n");
         } else if (!isInteger(numberCountInput)) {
             errors.append("Указанное количество выводимых чисел не является числом.\n");
+        } else {
+            numbersCount = Integer.parseInt(numberCountInput);
         }
         // проверим, правильно ли указаны параметры сортировки
         if (sortOrder.equalsIgnoreCase("asc") || sortOrder.equalsIgnoreCase("desc")) {
@@ -40,21 +46,23 @@ public class NumberReader {
                     new BufferedReader(new InputStreamReader(new FileInputStream("C:\\numbers.txt")));
             String line;
             StringBuilder notIntegerValies = new StringBuilder();
-            // TODO все максимальные числа будем скадывать в массив
-            int[] maxNumbers = new int[Integer.parseInt(numberCountInput)];
-            Integer minInteger = null; // минимальное число, с которым будем сравнивать все
+            // все максимальные числа будем скадывать в массив
+            List<Integer> maxNums = new ArrayList<>();
             while ((line = bufferedReader.readLine()) != null) {
                 if (isInteger(line)) {
-                    Integer currentNumber = Integer.parseInt(line);
-                    if (minInteger == null) {
-                        minInteger = currentNumber;
+                    Integer currentNumber = Integer.parseInt(line); // считаное число из файла
+                    if (maxNums.isEmpty()) {
+                        // если список максимальных чисел пустой, то запишем в него текущее
+                        maxNums.add(currentNumber);
+                    } else {
+                        Integer minNumber = Collections.min(maxNums); // минимальное число в списке в данной итерации
+                        if (currentNumber > minNumber) {
+                            // если текущее число больше минимального в списке, то удалим это минимальное
+                            maxNums.remove(minNumber);
+                            // и поместим туда текущее.
+                            maxNums.add(currentNumber);
+                        }
                     }
-                    if (minInteger < currentNumber) {
-                        //если текущее анализируеме число из файла больше текущего минимального
-                        // то кладем его в массив и все последую
-                    }
-                    //TODO сравниваем с самым маленьким значеним в массиве 
-                    // если больше - маленькое значение выкидываем и кладем это
                 } else {
                     // если считаное из файла число не валидно запишем его в сообщение пользователю
                     if (notIntegerValies.length() > 0) {
@@ -64,6 +72,7 @@ public class NumberReader {
                     notIntegerValies.append(line);
                 }
             }
+            // TODO по окончания чтения файла ввыводим список маскимальных чисел и ошибки, если есть
         }
     }
     
