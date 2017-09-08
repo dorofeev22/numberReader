@@ -1,2 +1,2 @@
 # numberReader
-sudy application
+student application
