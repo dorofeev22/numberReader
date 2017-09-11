@@ -1,10 +1,9 @@
 package numberreader;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,52 +40,11 @@ public class NumberReader {
             System.out.println(errorMessage);
         } else {
             // Читаем файл и отбираем максимальные числа
-            FileInputStream fileInputStream = null;
-            Scanner scanner = null;
-            StringBuilder notIntegerValues = new StringBuilder();
-            // все максимальные числа будем скадывать в массив
-            List<Integer> maxNums = new ArrayList<>();
-            int allNumbers = 0;
-            try {
-                fileInputStream = new FileInputStream("C:\\_numberReader\\numbers.txt");
-                scanner = new Scanner(fileInputStream);
-                while (scanner.hasNext()) {
-                    String line = scanner.nextLine();
-                    if (isInteger(line)) {
-                        Integer currentNumber = Integer.parseInt(line); // считаное число из файла
-                        if (maxNums.size() <= numberCount) {
-                            // если список максимальных не больше требуемого размера, то запишем в него текущее
-                            maxNums.add(currentNumber);
-                        } else {
-                            Integer minNumber = Collections.min(maxNums); // минимальное число в списке в данной итерации
-                            int minNumberIndex = maxNums.indexOf(minNumber); // его индекс
-                            if (currentNumber > minNumber) {
-                                // если текущее число больше минимального в списке, то заменим им минимальное
-                                maxNums.set(minNumberIndex, currentNumber);
-                            }
-                        }
-                    } else {
-                        // если считаное из файла число не валидно запишем его в сообщение пользователю
-                        if (notIntegerValues.length() > 0) {
-                        // если уже есть невалидные значения, то добавим разделитель
-                            notIntegerValues.append(", ");
-                        }
-                        notIntegerValues.append(line);
-                    }
-                    allNumbers++;
-                }
-                if (scanner.ioException() != null) {
-                    throw scanner.ioException();
-                }
-            } finally {
-                if (fileInputStream != null) {
-                    fileInputStream.close();
-                }
-                if (scanner != null) {
-                    scanner.close();
-                }
-            }
-            // По окончания чтения файла ввыводим список маскимальных чисел и ошибки, если есть
+            StringBuilder notIntegerValues = new StringBuilder(); // переменная для не числовых значений в файле
+            List<Integer> maxNums = new ArrayList<>(); // все максимальные числа будем скадывать в массив
+            int allNumbers = 0; // счетчик всех записей в файле
+            analiseFile(maxNums, numberCount, notIntegerValues, allNumbers);
+            // По окончании чтения файла ввыводим список маскимальных чисел и ошибки, если есть
             StringBuilder maxNumbersInfo = new StringBuilder();
             maxNumbersInfo.append(numberCount > allNumbers ? allNumbers : numberCount)
                     .append(" максимальных чисел в файле:\n");
@@ -107,6 +65,68 @@ public class NumberReader {
         }
     }
     
+    /**
+     * Анализ файла и построение массива максимальных чисел.
+     * @param maxNums массив для максимальных чисел.
+     * @param numberCount необходимое количество максимальных чисел.
+     * @param notIntegerValues переменная для ошибочных, не числовых значений в файле.
+     * @param allNumbers счетчик общего количества записей в файле
+     * @throws FileNotFoundException
+     * @throws IOException 
+     */
+    private static void analiseFile(
+            List<Integer> maxNums,
+            int numberCount, 
+            StringBuilder notIntegerValues,
+            int allNumbers) throws FileNotFoundException, IOException {
+        FileInputStream fileInputStream = null;
+        Scanner scanner = null;
+        try {
+            scanner = getScanner(fileInputStream);
+            while (scanner.hasNext()) {
+                String line = scanner.nextLine();
+                if (isInteger(line)) {
+                    Integer currentNumber = Integer.parseInt(line); // считаное число из файла
+                    if (maxNums.size() < numberCount) {
+                        // если список максимальных не больше требуемого размера, то запишем в него текущее
+                        maxNums.add(currentNumber);
+                    } else {
+                        Integer minNumber = Collections.min(maxNums); // минимальное число в списке в данной итерации
+                        int minNumberIndex = maxNums.indexOf(minNumber); // его индекс
+                        if (currentNumber > minNumber) {
+                            // если текущее число больше минимального в списке, то заменим им минимальное
+                            maxNums.set(minNumberIndex, currentNumber);
+                        }
+                    }
+                } else {
+                    // если считаное из файла число не валидно запишем его в сообщение пользователю
+                    if (notIntegerValues.length() > 0) {
+                    // если уже есть невалидные значения, то добавим разделитель
+                        notIntegerValues.append(", ");
+                    }
+                    notIntegerValues.append(line);
+                }
+                allNumbers++;
+            }
+            if (scanner.ioException() != null) {
+                throw scanner.ioException();
+            }
+        } finally {
+            if (fileInputStream != null) {
+                fileInputStream.close();
+            }
+            if (scanner != null) {
+                scanner.close();
+            }
+        }
+    }
+    
+    private static Scanner getScanner(FileInputStream fileInputStream) throws FileNotFoundException {
+        String filePath = new File("").getAbsolutePath();
+        fileInputStream = new FileInputStream(filePath + "/numbers.txt");
+        return new Scanner(fileInputStream);
+    }
+
     /**
      * Проверка строкового выражения на число.
      * @param value строквое выражение
