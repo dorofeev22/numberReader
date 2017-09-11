@@ -1,6 +1,5 @@
 package numberreader;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -83,8 +82,7 @@ public class NumberReader {
         FileInputStream fileInputStream = null;
         Scanner scanner = null;
         try {
-            String filePath = new File("").getAbsolutePath();
-            fileInputStream = new FileInputStream(filePath + "\\" + fileName);
+            fileInputStream = new FileInputStream(fileName);
             scanner = new Scanner(fileInputStream);
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
@@ -127,10 +125,10 @@ public class NumberReader {
     
     /**
      * Проверка строкового выражения на число.
-     * @param value строквое выражение
+     * @param value строковое выражение
      * @return true если число
      */
-    private static boolean isInteger(String value) {
+    public static boolean isInteger(String value) {
         boolean isInteger;
         try {
             Integer.parseInt(value);
