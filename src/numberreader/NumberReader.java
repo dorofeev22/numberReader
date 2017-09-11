@@ -20,6 +20,7 @@ public class NumberReader {
     public static void main(String[] args) throws FileNotFoundException, IOException {
         String numberCountInput = args[0];
         String sortOrderInput = args[1];
+        String fileName = args[2];
         // валидируем введенные параметры
         StringBuilder errors = new StringBuilder();
         int numberCount = 0;
@@ -40,7 +41,7 @@ public class NumberReader {
             System.out.println(errorMessage);
         } else {
             // Читаем файл и отбираем максимальные числа
-            ResultInfo resultInfo = analiseFile(numberCount);
+            ResultInfo resultInfo = analiseFile(numberCount, fileName);
             // По окончании чтения файла ввыводим список маскимальных чисел и ошибки, если есть
             StringBuilder maxNumbersInfo = new StringBuilder();
             int allNumbers = resultInfo.getAllNumbers();
@@ -75,14 +76,16 @@ public class NumberReader {
      * @throws IOException 
      */
     private static ResultInfo analiseFile(
-            int numberCount) throws FileNotFoundException, IOException {
+            int numberCount, String fileName) throws FileNotFoundException, IOException {
         StringBuilder notIntegerValues = new StringBuilder(); // переменная для не числовых значений в файле
         List<Integer> maxNums = new ArrayList<>(); // все максимальные числа будем скадывать в массив
         int allNumbers = 0; // счетчик всех записей в файле
         FileInputStream fileInputStream = null;
         Scanner scanner = null;
         try {
-            scanner = getScanner(fileInputStream);
+            String filePath = new File("").getAbsolutePath();
+            fileInputStream = new FileInputStream(filePath + "\\" + fileName);
+            scanner = new Scanner(fileInputStream);
             while (scanner.hasNext()) {
                 String line = scanner.nextLine();
                 if (isInteger(line)) {
@@ -122,12 +125,6 @@ public class NumberReader {
         return new ResultInfo(maxNums, notIntegerValues, allNumbers);
     }
     
-    private static Scanner getScanner(FileInputStream fileInputStream) throws FileNotFoundException {
-        String filePath = new File("").getAbsolutePath();
-        fileInputStream = new FileInputStream(filePath + "/numbers.txt");
-        return new Scanner(fileInputStream);
-    }
-
     /**
      * Проверка строкового выражения на число.
      * @param value строквое выражение
