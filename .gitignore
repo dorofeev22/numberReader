@@ -1,3 +1,9 @@
 /nbproject/private/
 /build/
 /dist/
+/utils/createLargeFile/nbproject/private/
+/utils/createLargeFile/dist/
+/utils/createLargeFile/build/
+
+/numbers.txt
+/utils/createLargeFile/numbers.txt
