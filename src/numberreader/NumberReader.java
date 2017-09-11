@@ -40,15 +40,14 @@ public class NumberReader {
             System.out.println(errorMessage);
         } else {
             // Читаем файл и отбираем максимальные числа
-            StringBuilder notIntegerValues = new StringBuilder(); // переменная для не числовых значений в файле
-            List<Integer> maxNums = new ArrayList<>(); // все максимальные числа будем скадывать в массив
-            int allNumbers = 0; // счетчик всех записей в файле
-            analiseFile(maxNums, numberCount, notIntegerValues, allNumbers);
+            ResultInfo resultInfo = analiseFile(numberCount);
             // По окончании чтения файла ввыводим список маскимальных чисел и ошибки, если есть
             StringBuilder maxNumbersInfo = new StringBuilder();
+            int allNumbers = resultInfo.getAllNumbers();
             maxNumbersInfo.append(numberCount > allNumbers ? allNumbers : numberCount)
                     .append(" максимальных чисел в файле:\n");
             // сортируем список максимальных чисел
+            List<Integer> maxNums = resultInfo.getMaxNums();
             Collections.sort(maxNums);
             if (sortOrder.equals(ReferenceSortOrder.desc)) {
                 Collections.reverse(maxNums);
@@ -58,6 +57,7 @@ public class NumberReader {
             }
             maxNumbersInfo.append("\nВсего записей в файле - ").append(allNumbers);
             System.out.println(maxNumbersInfo.toString());
+            StringBuilder notIntegerValues = resultInfo.getNotIntegerValues();
             if (notIntegerValues.length() > 0) {
                 System.out.println(
                         "Следующие числа в файле не являются числами:\n" + notIntegerValues.toString());
@@ -74,11 +74,11 @@ public class NumberReader {
      * @throws FileNotFoundException
      * @throws IOException 
      */
-    private static void analiseFile(
-            List<Integer> maxNums,
-            int numberCount, 
-            StringBuilder notIntegerValues,
-            int allNumbers) throws FileNotFoundException, IOException {
+    private static ResultInfo analiseFile(
+            int numberCount) throws FileNotFoundException, IOException {
+        StringBuilder notIntegerValues = new StringBuilder(); // переменная для не числовых значений в файле
+        List<Integer> maxNums = new ArrayList<>(); // все максимальные числа будем скадывать в массив
+        int allNumbers = 0; // счетчик всех записей в файле
         FileInputStream fileInputStream = null;
         Scanner scanner = null;
         try {
@@ -119,6 +119,7 @@ public class NumberReader {
                 scanner.close();
             }
         }
+        return new ResultInfo(maxNums, notIntegerValues, allNumbers);
     }
     
     private static Scanner getScanner(FileInputStream fileInputStream) throws FileNotFoundException {
