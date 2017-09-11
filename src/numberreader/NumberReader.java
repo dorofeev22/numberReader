@@ -67,14 +67,13 @@ public class NumberReader {
     
     /**
      * Анализ файла и построение массива максимальных чисел.
-     * @param maxNums массив для максимальных чисел.
      * @param numberCount необходимое количество максимальных чисел.
-     * @param notIntegerValues переменная для ошибочных, не числовых значений в файле.
-     * @param allNumbers счетчик общего количества записей в файле
+     * @param fileName
+     * @return 
      * @throws FileNotFoundException
      * @throws IOException 
      */
-    private static ResultInfo analiseFile(
+    public static ResultInfo analiseFile(
             int numberCount, String fileName) throws FileNotFoundException, IOException {
         StringBuilder notIntegerValues = new StringBuilder(); // переменная для не числовых значений в файле
         List<Integer> maxNums = new ArrayList<>(); // все максимальные числа будем скадывать в массив
